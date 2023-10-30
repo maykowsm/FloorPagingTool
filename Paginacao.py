@@ -33,8 +33,7 @@ class Paginacao_gui():
 
 		obj = FreeCAD.ActiveDocument.addObject('Part::FeaturePython','Piso')
 		instancia = Piso(obj,self.comprimento, self.largura, self.junta, self.amarra, self.especura, self.rotacao, self.subelementos, self.objeto)
-		obj.Proxy = instancia
-		# obj.ViewObject.Proxy = 0
+		obj.ViewObject.Proxy = 0
 
 
 		FreeCAD.ActiveDocument.recompute()
@@ -44,8 +43,8 @@ class Paginacao_gui():
 
 
 class Piso():
-	def __init__(self,obj ,comprimento, largura, junta, amarra, especura, rotacao, subelementos, objeto):
-		# obj.Proxy = self
+	def __init__(self , obj ,comprimento, largura, junta, amarra, especura, rotacao, subelementos, objeto):
+		obj.Proxy = self
 
 		#Criação das propriedades do objeto
 		obj.addProperty("App::PropertyLinkSubList","Objetos","Objeto","Face celecionada")
@@ -77,7 +76,14 @@ class Piso():
 	def get_orientation(self):
 		return self.orientation
 
+	# def __getstate__(self) -> object:
+	# 	return None
+	
+	# def __setstate__(self, state):
+	# 	return None
+
 	def execute(self,obj):
+		print("espessura:", obj.Espessura)
 		'''Função que é executada toda vez que o objeto precisar ser recalulado'''
 		
 		#Define a qual plano principal a face está paralela ----------------------------
@@ -162,7 +168,7 @@ class Piso():
 			size_face[0] = selection_box.YLength
 			size_face[1] = selection_box.ZLength
 		
-		print(size_face)
+		print("Tamanho da face:", size_face)
 		#-----------------------------------------------------------------------------------------
 		
 		#Distribui os retangulos em uma linha 
@@ -247,7 +253,6 @@ class Piso():
 		elif orientacao == 'xz':
 			cut.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0),sentido*90)
 
-
 		elif  orientacao == 'yz':
 			#cut.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,0,1),-90)
 			cut.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,1,0), -sentido*90)
@@ -258,7 +263,7 @@ class Piso():
 
 		recCutlist = [] #vetor dos retangulos cortados
 		for rec in recShapeList:
-			part = Part.Shape.common(rec.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,0,1), obj.Rotacao).extrude(FreeCAD.Vector(0,0, obj.Espessura)), cut )
+			part = Part.Shape.common(rec.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,0,1), obj.Rotacao).extrude(FreeCAD.Vector(0,0, obj.Espessura*sentido)), cut )
 			recCutlist.append(part)
 
 		#cria o elemento de piso
@@ -271,7 +276,6 @@ class Piso():
 
 		#Rotaciona o piso para ficar na posição correta
 		if orientacao == 'xy':
-			#Não faz nada
 			pass
 		elif orientacao == 'xz':
 			tile.rotate(p0, FreeCAD.Vector(1,0,0),-sentido*90)
@@ -280,7 +284,7 @@ class Piso():
 			#tile.rotate(p0,FreeCAD.Vector(0,0,1),90)
 			tile.rotate(p0, FreeCAD.Vector(0,1,0), sentido*90)
 
-		#Part.show(tile)
+		# Part.show(tile)
 		obj.Placement = tile.Placement
 		
 		
@@ -289,14 +293,5 @@ class Piso():
 
 		
 		
-
-
-
-
-
-
-
-
-
 janela = Paginacao_gui()
 FreeCADGui.Control.showDialog(janela)
