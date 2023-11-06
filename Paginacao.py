@@ -241,6 +241,7 @@ class Piso():
 			cut = obj.Objetos[0][0].Shape.getElement(obj.Objetos[0][1][0]).copy(True).extrude(FreeCAD.Vector(sentido*2*obj.Espessura,0,0))
 
 
+		Part.show(cut)
 		#---------------------------------------------------------------
 
 		#Move a forma do corte para a origem e rotaciona para ficar no plano xy 
@@ -257,13 +258,14 @@ class Piso():
 			#cut.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,0,1),-90)
 			cut.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,1,0), -sentido*90)
 		
+		Part.show(cut)
 		#---------------------------------------------------------------
 	
 		#rotaciona cria a extruxão e corta cada peça e a coloca em um vetor
 
 		recCutlist = [] #vetor dos retangulos cortados
 		for rec in recShapeList:
-			part = Part.Shape.common(rec.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,0,1), obj.Rotacao).extrude(FreeCAD.Vector(0,0, obj.Espessura*sentido)), cut )
+			part = Part.Shape.common(rec.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,0,1), obj.Rotacao).extrude(FreeCAD.Vector(0,0, obj.Espessura)), cut )
 			recCutlist.append(part)
 
 		#cria o elemento de piso
