@@ -176,18 +176,20 @@ class Piso():
 		lineRecList = [base_retangle] #lista  de formas retangulares distribuidas em linha reta
 		offset_face = 2 #Tamanho do espaçamento da borda da face
 
-
+		maiordimencao = max([size_face[0], size_face[1]])
 		#Gerando a linha de formas retangulares 
-		for i in range(1, int((size_face[0]/obj.Comprimento)*offset_face)): #Cria uma lista linear com 2 vezes o tamanho da face
+		for i in range(1, int((maiordimencao/obj.Comprimento)*offset_face)): #Cria uma lista linear com 2 vezes o tamanho da face
 			#copia para a direita
 			rec = base_retangle.copy(True)
 			rec.translate(FreeCAD.Vector(i*(obj.Comprimento + obj.Junta),0,0))
 			lineRecList.append(rec)
+			# Part.show(rec)
 
 			#copia para a esquerda
 			rec = base_retangle.copy(True)
 			rec.translate(FreeCAD.Vector(-i*(obj.Comprimento + obj.Junta),0,0))
 			lineRecList.append(rec)
+			# Part.show(rec)
 
 		#-----------------------------------------------------------------------------------------
 
@@ -195,7 +197,7 @@ class Piso():
 
 		recShapeList = [] #lista de formas retangulares
 		offset_face = 2 #tamanho do espaçamento da borda da face
-		for i in range(1, int((size_face[1]/obj.Largura)*offset_face)): #lista de retangulos distribuidos na face com base na linha de retangulos
+		for i in range(1, int((maiordimencao/obj.Largura)*offset_face)+1): #lista de retangulos distribuidos na face com base na linha de retangulos
 			if i%2 == 0: #Em linhas pares
 				#Copia a lista linear de retangulos colocando somente o deslocamento em y 
 				for j in lineRecList:
@@ -203,11 +205,13 @@ class Piso():
 					rec = j.copy(True)
 					rec.translate(FreeCAD.Vector(0, i * (obj.Largura + obj.Junta), 0))
 					recShapeList.append(rec)
+					# Part.show(rec)
 
 					#Copia para a direção -y
 					rec = j.copy(True)
 					rec.translate(FreeCAD.Vector(0, -i * (obj.Largura + obj.Junta), 0))
 					recShapeList.append(rec)
+					# Part.show(rec)
 			else: # em linhas impares
 				#Copia a lista linear de retangulos colocando o deslocamento em y e em x
 				for j in lineRecList:
@@ -215,11 +219,13 @@ class Piso():
 					rec = j.copy(True)
 					rec.translate(FreeCAD.Vector(obj.Amarracao, i * (obj.Largura + obj.Junta), 0))
 					recShapeList.append(rec)
+					# Part.show(rec)
 
 					#Copia para a direção -y
 					rec = j.copy(True)
 					rec.translate(FreeCAD.Vector(obj.Amarracao, -i * (obj.Largura + obj.Junta), 0))
 					recShapeList.append(rec)
+					# Part.show(rec)
 
 		
 		#coloca a lista de retangulos em linha na "matriz" de retangulos
@@ -241,7 +247,6 @@ class Piso():
 			cut = obj.Objetos[0][0].Shape.getElement(obj.Objetos[0][1][0]).copy(True).extrude(FreeCAD.Vector(sentido*2*obj.Espessura,0,0))
 
 
-		Part.show(cut)
 		#---------------------------------------------------------------
 
 		#Move a forma do corte para a origem e rotaciona para ficar no plano xy 
@@ -258,7 +263,7 @@ class Piso():
 			#cut.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,0,1),-90)
 			cut.rotate(FreeCAD.Vector(0,0,0), FreeCAD.Vector(0,1,0), -sentido*90)
 		
-		Part.show(cut)
+		# Part.show(cut)
 		#---------------------------------------------------------------
 	
 		#rotaciona cria a extruxão e corta cada peça e a coloca em um vetor
@@ -270,7 +275,7 @@ class Piso():
 
 		#cria o elemento de piso
 		tile = Part.makeCompound(recCutlist)
-
+		# Part.show(tile)
 		#---------------------------------------------------------------
 
 		#Posiciona o piso no ponto inicial da paginação
