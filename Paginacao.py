@@ -59,6 +59,8 @@ class Piso():
 
 		obj.addProperty("App::PropertyLength","desloca_x","Deslocamento","Deslocamento das peças em X").desloca_x = 0
 		obj.addProperty("App::PropertyLength","desloca_y","Deslocamento","Deslocamento das peças em Y").desloca_y = 0
+		
+		obj.addProperty("App::PropertyArea","Area","Dimencoes","Deslocamento das peças em Y").Area = 0
 
 		#Passando os parametros para o objeto
 		un = FreeCAD.Units.parseQuantity #objeto que converte uma stringa com numeros e letras para unidades do FreeCAD
@@ -83,6 +85,9 @@ class Piso():
 	# 	return None
 
 	def execute(self,obj):
+		#Pega a área da face a e a aplica ao objeto Piso
+		area = obj.Objetos[0][0].Shape.getElement(obj.Objetos[0][1][0]).Area
+		obj.Area = area
 		print("espessura:", obj.Espessura)
 		'''Função que é executada toda vez que o objeto precisar ser recalulado'''
 		
